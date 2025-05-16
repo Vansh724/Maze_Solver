@@ -1,0 +1,112 @@
+#define m1 10    //Right Motor MA1
+#define m2 9     //Right Motor MA2
+#define m3 5     //Left Motor MB1
+#define m4 3     //Left Motor MB2
+
+#define s1 12     // Left Sensor
+#define s2 7      // Middle Sensor
+#define s3 2      // Right Sensor
+void setup ()
+{
+  pinMode(s1, INPUT);
+  pinMode(s2, INPUT);
+  pinMode(s3, INPUT);
+
+  pinMode(m1, OUTPUT);
+  pinMode(m2, OUTPUT);
+  pinMode(m3, OUTPUT);
+  pinMode(m4, OUTPUT);
+
+  Serial.begin(9600);
+}
+  void Forward()
+  {
+    analogWrite(m1,120);
+    analogWrite(m2,0);
+    analogWrite(m3,120);
+    analogWrite(m4,0);
+  }
+
+void Right()
+{
+analogWrite(m1,0);
+analogWrite(m2,120);
+analogWrite(m3,120);
+analogWrite(m4,0);
+}
+
+void Left()
+{
+analogWrite(m1,120);
+analogWrite(m2,0);
+analogWrite(m3,0);
+analogWrite(m4,120);
+
+}
+
+
+void Stop()
+{
+analogWrite(m1,0);
+analogWrite(m4,0);
+analogWrite(m3,0);
+analogWrite(m2,0);
+}
+
+
+
+void loop ()
+{
+int   IR1 = digitalRead(s1);
+int   IR2 = digitalRead(s2);
+int   IR3 = digitalRead(s3);
+// Serial.print("Reading of sensor1 is : ");
+// Serial.println(IR1);
+// Serial.print("Reading of sensor2 is : ");
+// Serial.println(IR2);
+// Serial.print("Reading of sensor3 is : ");
+// Serial.println(IR3);
+
+ if (IR1 == HIGH && IR2 == HIGH && IR3 == HIGH)// T-intersection
+   {
+    Left();
+    delay(500);
+   }
+  else if (IR1 == LOW && IR2 == HIGH && IR3 == HIGH) //Right Intersection
+    {
+     Forward();
+     delay(10);
+    }
+     else if (IR1 == LOW && IR2 == HIGH && IR3 == LOW) //Straight Path
+    {
+      Forward();
+      delay(10);
+    }
+
+    else if (IR1 == HIGH && IR2 == HIGH && IR3 == LOW)//Left T Intersection
+      {
+        Left();// As Left is possible
+        delay(500);
+      }
+
+  else if (IR1 == HIGH && IR2 == LOW && IR3 == LOW)//Left Deviated
+    {
+     Left();
+     delay(50);
+    }
+
+  else if (IR1 == LOW && IR2 == LOW && IR3 == HIGH)//Right Deviated
+    {
+      Right();
+      delay(50);
+    }
+
+
+   else if (IR1 == LOW && IR2 ==LOW && IR3 == LOW)//Dead End
+   { Forward();
+      delay(100);
+     Left(); //As no other direction is possible
+      delay(1000);
+   }
+
+}
